@@ -25,9 +25,10 @@ import org.droidplanner.android.R;
 import org.droidplanner.android.fragments.FlightMapFragment;
 import org.droidplanner.android.fragments.actionbar.ActionBarTelemFragment;
 import org.droidplanner.android.fragments.widget.video.MiniWidgetSoloLinkVideo;
-import org.droidplanner.android.utils.Utils;
 import org.droidplanner.android.view.JoystickView;
 import org.droidplanner.android.view.JoystickView.JoystickListener;
+import org.droidplanner.android.dialogs.SlideToUnlockDialog;
+import org.droidplanner.android.utils.prefs.DroidPlannerPrefs;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -88,12 +89,12 @@ public class ControlActivity extends DrawerNavigationUI {
         }
     };
 
-    /*private final View.OnClickListener takeOffClickListener = new View.OnClickListener() {
+    private final View.OnClickListener takeOffClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Utils.getTakeOffConfirmation(dpApp.getAppPreferences(), getSupportFragmentManager(), dpApp.getDrone());
+            getTakeOffConfirmation();//Utils.getTakeOffConfirmation(dpApp.getAppPreferences(), getSupportFragmentManager(), dpApp.getDrone());
         }
-    };*/
+    };
 
     private final View.OnClickListener landClickListener = new View.OnClickListener() {
         @Override
@@ -102,12 +103,12 @@ public class ControlActivity extends DrawerNavigationUI {
         }
     };
 
-    /*private final View.OnClickListener armClickListener = new View.OnClickListener() {
+    private final View.OnClickListener armClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Utils.getArmingConfirmation(getSupportFragmentManager(), dpApp.getDrone());
+            getArmingConfirmation();//Utils.getArmingConfirmation(getSupportFragmentManager(), dpApp.getDrone());
         }
-    };*/
+    };
 
     private JoystickView leftJoystick, rightJoystick;
     private Button takeOffLand;
@@ -120,7 +121,7 @@ public class ControlActivity extends DrawerNavigationUI {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_control);
 
-        //takeOffLand = (Button) findViewById(R.id.take_off_land_button);
+        takeOffLand = (Button) findViewById(R.id.take_off_land_button);
 
         leftJoystick = (JoystickView) findViewById(R.id.left_joystick);
         leftJoystick.setSpring(JoystickView.Axis.X, true);
@@ -144,28 +145,27 @@ public class ControlActivity extends DrawerNavigationUI {
         }
     }
 
-    /*private void toggleMapVideo(){
+    private void toggleMapVideo() {
         FragmentManager fm = getSupportFragmentManager();
         Fragment widgetFragment = fm.findFragmentById(R.id.widget_view);
-        if(widgetFragment == null || widgetFragment instanceof MiniWidgetSoloLinkVideo){
+        if (widgetFragment == null || widgetFragment instanceof MiniWidgetSoloLinkVideo) {
             //Default is the mapview
             widgetFragment = new FlightMapFragment();
-        }
-        else {
+        } else {
             //Assuming that the widget fragment is the map view
             widgetFragment = new MiniWidgetSoloLinkVideo();
         }
         fm.beginTransaction().replace(R.id.widget_view, widgetFragment).commit();
-    }*/
+    }
 
-    public boolean onCreateOptionsMenu(Menu menu){
+    public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.menu_control_activity, menu);
         return true;
     }
 
-    /*public boolean onOptionsItemSelected(MenuItem item){
-        switch(item.getItemId()){
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
             case R.id.menu_toggle_map_video:
                 toggleMapVideo();
                 return true;
@@ -173,7 +173,7 @@ public class ControlActivity extends DrawerNavigationUI {
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }*/
+    }
 
     private float computeHeading() {
         return lastYaw + lastYawSpeed * ((System.currentTimeMillis() - lastReceived) / 1000f);
@@ -252,7 +252,7 @@ public class ControlActivity extends DrawerNavigationUI {
         });
 
         State state = drone.getAttribute(AttributeType.STATE);
-       // toggleTakeOffLand(state);
+        toggleTakeOffLand(state);
     }
 
     private void enableJoysticks(boolean enable) {
@@ -265,20 +265,40 @@ public class ControlActivity extends DrawerNavigationUI {
         }
     }
 
-    /*private void toggleTakeOffLand(State state){
-        if(takeOffLand != null && state != null){
-            if(state.isFlying()){
+    private void toggleTakeOffLand(State state) {
+        if (takeOffLand != null && state != null) {
+            if (state.isFlying()) {
                 takeOffLand.setText(R.string.label_land);
                 takeOffLand.setOnClickListener(landClickListener);
-            }
-            else if(state.isArmed()){
+            } else if (state.isArmed()) {
                 takeOffLand.setText(R.string.label_take_off);
                 takeOffLand.setOnClickListener(takeOffClickListener);
-            }
-            else{
+            } else {
                 takeOffLand.setText(R.string.mission_control_arm);
                 takeOffLand.setOnClickListener(armClickListener);
             }
         }
-    }*/
+    }
+
+    private void getTakeOffConfirmation() {
+        final SlideToUnlockDialog unlockDialog = SlideToUnlockDialog.newInstance("take off", new Runnable() {
+            @Override
+            public void run() {
+                final double takeOffAltitude = mAppPrefs.getDefaultAltitude();
+                ControlApi.getApi(dpApp.getDrone()).takeoff(takeOffAltitude, null);
+            }
+        });
+        unlockDialog.show(getSupportFragmentManager(), "Slide to take off");
+    }
+
+
+    private void getArmingConfirmation() {
+        SlideToUnlockDialog unlockDialog = SlideToUnlockDialog.newInstance("arm", new Runnable() {
+            @Override
+            public void run() {
+                dpApp.getDrone().arm(true);
+            }
+        });
+        unlockDialog.show(getSupportFragmentManager(), "Slide To Arm");
+    }
 }

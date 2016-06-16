@@ -528,6 +528,9 @@
     <string name="pref_vehicle_home_update_warning_summary">Warns about vehicle home location updates while in flight.</string>
     <string name="label_photo">Photo</string>
     <string name="label_record">Record</string>
+    <string name="label_take_off">Take Off</string>
+    <string name="label_land">Land</string>
+    <string name="menu_toggle_map_video">Toggle map / video</string>
     <string name="label_widgets_list">Widgets List</string>
     <string name="label_solo_video_stream">Solo video stream</string>
     <string name="label_custom_video_stream">Custom video stream</string>

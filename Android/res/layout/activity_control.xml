@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:id="@+id/widget_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/actionbar_container" />
+
+    <org.droidplanner.android.view.FitsSystemWindowsFrameLayout
+        android:id="@+id/actionbar_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:fitsSystemWindows="true">
+
+        <include layout="@layout/actionbar_toolbar" />
+    </org.droidplanner.android.view.FitsSystemWindowsFrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/actionbar_container"
+        android:orientation="horizontal"
+        android:weightSum="1.0">
+
+        <org.droidplanner.android.view.JoystickView
+            android:id="@+id/left_joystick"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:enabled="false"
+            android:layout_weight=".5" />
+
+        <org.droidplanner.android.view.JoystickView
+            android:id="@+id/right_joystick"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:enabled="true"
+            android:layout_weight=".5" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/take_off_land_button"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minHeight="48dp"
+        android:text="@string/label_take_off"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"/>
+
+</RelativeLayout>
