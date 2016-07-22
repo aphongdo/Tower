@@ -86,7 +86,7 @@ public class ControlActivity extends DrawerNavigationUI {
         public void run() {
             float heading = computeHeading();
             sendYaw(heading);
-            if ( (Math.abs(rightJoystick.getAxis(JoystickView.Axis.X)) > JoystickView.DEADZONE) || (Math.abs(rightJoystick.getAxis(JoystickView.Axis.Y)) > JoystickView.DEADZONE)))
+            if ( (Math.abs(rightJoystick.getAxis(JoystickView.Axis.X)) > JoystickView.DEADZONE) || (Math.abs(rightJoystick.getAxis(JoystickView.Axis.Y)) > JoystickView.DEADZONE))
             {
                 sendMove();
             }
