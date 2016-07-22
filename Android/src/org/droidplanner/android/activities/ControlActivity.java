@@ -86,6 +86,10 @@ public class ControlActivity extends DrawerNavigationUI {
         public void run() {
             float heading = computeHeading();
             sendYaw(heading);
+            if ( (Math.abs(rightJoystick.getAxis(JoystickView.Axis.X)) > JoystickView.DEADZONE) || (Math.abs(rightJoystick.getAxis(JoystickView.Axis.Y)) > JoystickView.DEADZONE)))
+            {
+                sendMove();
+            }
         }
     };
 
@@ -135,7 +139,7 @@ public class ControlActivity extends DrawerNavigationUI {
         rightJoystick.setJoystickListener(rightJoystickListener);
 
         ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
-        scheduledExecutorService.scheduleAtFixedRate(yawUpdater, 0, 33, TimeUnit.MILLISECONDS);
+        scheduledExecutorService.scheduleAtFixedRate(yawUpdater, 0, 200, TimeUnit.MILLISECONDS);
 
         FragmentManager fm = getSupportFragmentManager();
         Fragment miniVideoFragment = fm.findFragmentById(R.id.widget_view);
